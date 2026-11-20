@@ -1,0 +1,81 @@
+name: Сборка APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Скачать код
+        uses: actions/checkout@v4
+
+      - name: Разложить файлы по папкам (если загружены одной кучей)
+        run: |
+          if [ ! -f app/src/main/AndroidManifest.xml ]; then
+            echo "Файлы загружены без папок — раскладываю сам"
+            mkdir -p app/src/main/java/com/spermbank/office app/src/main/res/values app/src/main/res/mipmap-xxxhdpi app/src/main/assets/www
+            mv app.build.gradle app/build.gradle
+            mv debug.keystore app/debug.keystore
+            mv AndroidManifest.xml app/src/main/
+            mv MainActivity.java app/src/main/java/com/spermbank/office/
+            mv strings.xml styles.xml app/src/main/res/values/
+            mv ic_launcher.png app/src/main/res/mipmap-xxxhdpi/
+            mv index.html style.css game.js app/src/main/assets/www/
+            if [ -f icon.png ]; then mv icon.png app/src/main/assets/www/; fi
+          fi
+          find app -type f | sort
+
+      - name: Установить Node.js
+        if: hashFiles('src/main.js') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Собрать игру из исходников (JavaScript)
+        if: hashFiles('src/main.js') != ''
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          npm run build
+
+      - name: Установить Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Установить Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Установить Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Собрать APK
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Переименовать APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk SPERMbank-Office.apk
+
+      - name: Сохранить APK в Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: SPERMbank-Office-APK
+          path: SPERMbank-Office.apk
+
+      - name: Выложить APK в Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: СПЕРМбанк Офис — сборка ${{ github.run_number }}
+          body: |
+            Автоматическая сборка №${{ github.run_number }}.
+            Скачай файл SPERMbank-Office.apk ниже и установи на Android.
+          files: SPERMbank-Office.apk
+          make_latest: true
