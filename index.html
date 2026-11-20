@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1f2e">
+  <title>СПЕРМбанк: Офис</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game"></div>
+
+  <!-- HUD поверх 3D -->
+  <div id="hud">
+    <div class="hud-top">
+      <div class="chip" id="h-money-chip">💰 <b id="h-money">0</b></div>
+      <div class="chip rank-chip"><span id="h-rank">Стажёр</span><div class="bar"><i id="h-rep"></i></div></div>
+      <div class="chip">📅 <span id="h-day">1</span> · <b id="h-clock">09:00</b></div>
+      <div class="chip meter" title="Бодрость">⚡<div class="bar energy"><i id="h-energy"></i></div></div>
+      <div class="chip meter" title="Температура ПК">🌡<div class="bar heat"><i id="h-heat"></i></div></div>
+      <div class="chip" id="h-net-chip">📶 <span id="h-net">56К</span></div>
+    </div>
+    <div class="hud-side">
+      <button class="round" id="b-pc" title="Сесть за компьютер">🖥️</button>
+      <button class="round" id="b-coffee" title="Позвать официанта">☕</button>
+      <button class="round" id="b-team" title="Коллеги">👥</button>
+      <button class="round" id="b-menu" title="Меню">⚙️</button>
+    </div>
+    <div id="hint" class="hint hidden"></div>
+  </div>
+
+  <div id="labels"></div>
+  <div id="os" class="os hidden"></div>
+  <div id="call" class="call hidden"></div>
+  <div id="modal-root"></div>
+  <div id="toasts"></div>
+  <div id="sleep" class="sleep hidden"><div>😴 Zzz…<br><small>Вы уснули за столом. Прошло 45 минут.</small></div></div>
+
+  <div id="splash">
+    <div class="splash-inner">
+      <div class="logo-coin">₽</div>
+      <h1>СПЕРМбанк</h1>
+      <h2>Офис быстрой бухгалтерии</h2>
+      <div id="splash-status">Загрузка офиса…</div>
+      <button id="b-start" class="big-btn hidden">Начать смену</button>
+      <div class="splash-note">Пародийная игра. Все совпадения с реальными банками случайны.</div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

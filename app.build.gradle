@@ -1,0 +1,44 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Номер сборки берём из GitHub Actions, чтобы каждое обновление ставилось поверх старого
+def buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
+
+android {
+    namespace 'com.spermbank.office'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.spermbank.office"
+        minSdk 24
+        targetSdk 34
+        versionCode buildNumber
+        versionName "1.0." + buildNumber
+    }
+
+    // Постоянный ключ подписи из репозитория: обновления APK ставятся поверх без удаления игры
+    signingConfigs {
+        fixed {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.fixed
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.fixed
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
